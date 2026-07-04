@@ -60,6 +60,7 @@ Reconstitute: `grep -rl "^scope: universal" docs/protocols/universal/*.md`
 
 | [flyway-extension-migration-registration.md](flyway-extension-migration-registration.md) | Quarkus extensions must use repo-scoped Flyway migration paths and register SQL resources for native image | Any Quarkus extension shipping Flyway migrations |
 | [quarkus-extension-unremovable-consumer-beans.md](quarkus-extension-unremovable-consumer-beans.md) | Quarkus extension CDI beans with no internal injection point must be annotated @Unremovable | Any Quarkus extension publishing a CDI bean that consumers inject but the extension never injects internally |
+| [testtransaction-requires-new-unique-names.md](testtransaction-requires-new-unique-names.md) | @TestTransaction tests calling REQUIRES_NEW helper beans must use unique entity names | Any @QuarkusTest where service delegates to @Transactional(REQUIRES_NEW) helper |
 
 ## CDI / Dependency Injection
 
