@@ -56,7 +56,8 @@ into one sequence. The following ranges are reserved to prevent `V`-number colli
 |---|---|---|
 | V1–V999 | `persistence-jpa/` — preference schema | `classpath:db/platform/migration` |
 | V1000–V1999 | `memory-jpa/` — memory_entry table | `classpath:db/memory/migration` |
-| V2000+ | next casehub-platform optional module | — |
+| V2000–V2999 | `digest-jpa/` — digest_buffer table | `classpath:db/digest/migration` |
+| V3000+ | next casehub-platform optional module | — |
 
 ## Rule 2 — Epic-branch V-number reservation (sequential V1–V999 range only)
 
