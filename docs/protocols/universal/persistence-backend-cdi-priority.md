@@ -22,7 +22,8 @@ implementation — JPA/SQL as primary, NoSQL as secondary, mock as default.
 
 | Tier | Annotation | CDI resolution | Purpose |
 |------|-----------|---------------|---------|
-| 1 — Mock / no-op | `@DefaultBean` | Yielded by any non-default bean | Ships with SPI; active when no real backend is on the classpath |
+| 1a — Functional fallback | `@DefaultBean` | Yielded by any non-default bean | Works correctly within constraints (e.g. in-memory counting — functional but not durable). Ships with SPI or runtime module |
+| 1b — No-op / mock | `@DefaultBean` | Yielded by any non-default bean | No-op or misconfiguration signal. Ships with SPI; active when no real backend is on the classpath |
 | 2 — Primary backend | `@ApplicationScoped` | Beats `@DefaultBean` | JPA / SQL implementation |
 | 3 — Secondary backend | `@Alternative @Priority(1)` | Beats `@ApplicationScoped` | NoSQL implementation; wins when co-deployed with JPA |
 | 4 — In-memory | `@Alternative @Priority(N)` where N > 1 (e.g. 10 or 100) | Beats everything | Ephemeral working implementation — tests and zero-config installs; data lost on restart |
@@ -54,7 +55,27 @@ is valid and works correctly.
 
 ## Per-Tier Implementation Guide
 
-### Tier 1 — Mock / no-op default
+### Tier 1a — Functional fallback
+
+Ships in the runtime module. A `@DefaultBean` that works correctly within its constraints — valid when the SPI has meaningful non-persistent semantics. Not a mock; it performs real work, just without durability or external infrastructure.
+
+```java
+@DefaultBean
+@ApplicationScoped
+public class DefaultFaultCountStore extends InMemoryFaultCountStore {
+    // Counting works out of the box — in-memory, not durable across restarts
+}
+```
+
+Rules:
+- Must be `@DefaultBean @ApplicationScoped`
+- Must be self-contained — no external infrastructure (DB, message broker) required
+- Must be functionally correct within its constraints (e.g. in-memory counting works, just not durable)
+- Displaced by the primary backend (Tier 2) when on the classpath
+
+Reference: `DefaultFaultCountStore` (casehub-desiredstate), `SimpleTransitionExecutor` (casehub-desiredstate)
+
+### Tier 1b — No-op / mock default
 
 Ships in the same module as the SPI (or a dedicated `platform`/`runtime` module):
 
@@ -70,6 +91,7 @@ Rules:
 - Must be `@DefaultBean` — never bare `@ApplicationScoped` (would collide with real backends)
 - Must be `@ApplicationScoped` — mock has no request context to read from
 - Must be configurable via `@ConfigProperty` so tests can drive behaviour without a real backend
+- Signals misconfiguration when active in production — the SPI needs a real backend
 
 ### Tier 2 — Primary backend (JPA / SQL)
 
@@ -120,9 +142,11 @@ failure occurs when a NoSQL secondary module (also `@Priority(1)`) is added: ARC
 at startup. Use plain `@ApplicationScoped` for the primary so the secondary can safely claim
 `@Priority(1)` without collision.
 
-**Do not use `@DefaultBean` on a real (non-mock) implementation.**
-`@DefaultBean` yields to any other qualifying bean, including other real implementations.
-If two real backends both use `@DefaultBean`, CDI resolution becomes ambiguous and deployment fails.
+**Do not use `@DefaultBean` on implementations that require external infrastructure.**
+`@DefaultBean` yields to any other qualifying bean. Implementations that require a database,
+message broker, or external service must NOT be `@DefaultBean` — use plain `@ApplicationScoped`
+(Tier 2) or `@Alternative` (Tier 3). `@DefaultBean` is valid for functional fallbacks (Tier 1a)
+that are self-contained and work without infrastructure, and for no-op/mock defaults (Tier 1b).
 
 **Do not add `@Alternative` to the mock.**
 The mock is already `@DefaultBean` — that is sufficient. Adding `@Alternative` changes
