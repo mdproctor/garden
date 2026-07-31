@@ -12,6 +12,9 @@ violation_hint: "Module chosen blocking due to build constraints (e.g. reactive 
 created: 2026-05-21
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 ## Selection principle
 
 Choose **reactive** when the module is:

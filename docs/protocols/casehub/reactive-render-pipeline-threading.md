@@ -12,4 +12,7 @@ violation_hint: "Stage 1 (payload build / cache check) runs on the event loop th
 created: 2026-05-29
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 Reactive rendering in casehub-eidos must decompose into three stages with explicit thread routing: **Stage 1** (payload building, cache check) runs on the worker pool via `runSubscriptionOn(Infrastructure.getDefaultWorkerPool())` — JSON serialisation is non-trivial CPU work that must not block the event loop. **Stage 2** (LLM enrichment) must not hold any thread — use `StreamingChatModel` bridged to `Uni` via `CompletableFuture.orTimeout()` + `Uni.createFrom().completionStage()`. **Stage 3** (format assembly, cache write) must return to the worker pool via `.emitOn(Infrastructure.getDefaultWorkerPool())` before `.map()` — the streaming callback thread must not perform heavy computation. When no `StreamingChatModel` is available, fall back to `Uni.createFrom().item(() -> blockingDelegate.render(...)).runSubscriptionOn(workerPool)`.

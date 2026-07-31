@@ -12,4 +12,7 @@ violation_hint: "A reactive SPI bean is gated on a separate flag (e.g. casehub.o
 created: 2026-06-09
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 When a reactive SPI implementation injects `ReactiveChannelService` or `ReactiveMessageService` (which are themselves gated on `casehub.qhorus.reactive.enabled=true`), the implementation bean must use the same gate — `@IfBuildProperty(name="casehub.qhorus.reactive.enabled", stringValue="true")`. Introducing a separate harness-specific flag (e.g. `casehub.openclaw.reactive.enabled`) creates a two-flag co-deployment requirement: if only the harness flag is set, the bean activates but its injected reactive services are absent, causing `UnsatisfiedResolutionException` at startup. A single gate is the correct design: activating qhorus reactive implies all harnesses depending on it should also activate. See the openclaw reactive SPI implementation (`ReactiveOpenClawWorkerProvisioner`, `ReactiveOpenClawCaseChannelProvider`) as the reference — both gated directly on `casehub.qhorus.reactive.enabled`. Refs PP-20260519-39a9a5 (reactive-service-build-gating).

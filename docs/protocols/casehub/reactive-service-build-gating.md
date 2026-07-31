@@ -13,6 +13,9 @@ created: 2026-05-19
 updated: 2026-05-22
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 Implements PP-20260519-f2e160 (reactive-blocking-tier-separation) for the Quarkus/casehub
 platform. Every service capability ships in two separate @ApplicationScoped beans: a
 blocking-tier bean (no reactive imports, no Instance<T> wrappers) and a reactive-tier bean

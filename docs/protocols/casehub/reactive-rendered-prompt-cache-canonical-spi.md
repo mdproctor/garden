@@ -11,4 +11,7 @@ violation_hint: "A renderer injects RenderedPromptCache directly. When the user 
 created: 2026-05-30
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 `ReactiveRenderedPromptCache` is the canonical cache SPI in casehub-eidos. Both `EidosSystemPromptRenderer` (blocking) and `DefaultReactiveSystemPromptRenderer` (reactive) must inject `ReactiveRenderedPromptCache` directly. The blocking renderer calls `.await().atMost(Duration.ofSeconds(5))` on it — safe, because it runs on the worker pool. `RenderedPromptCache` (blocking) stays in `api/` as a convenience SPI for simple implementations; a `BlockingToReactiveRenderedPromptCacheAdapter @DefaultBean` bridges it automatically. This guarantees that when a user provides an alternative cache implementation (in-memory LRU, Redis), both renderers see the same backing store. A renderer that bypasses this by injecting `RenderedPromptCache` directly creates a split-brain cache when any `@Alternative ReactiveRenderedPromptCache` is installed.

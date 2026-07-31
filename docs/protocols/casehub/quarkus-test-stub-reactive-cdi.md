@@ -11,4 +11,7 @@ violation_hint: "All @QuarkusTest tests fail at CDI discovery with 'UnsatisfiedR
 created: 2026-05-19
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 When a casehub library module (e.g. casehub-ledger) declares a CDI bean that injects a reactive repository or reactive service — and the consuming extension runs tests with a non-reactive H2 datasource (`quarkus.datasource.reactive=false`) — the real reactive implementation is gated by `@IfBuildProperty` and absent, leaving the library's bean unsatisfied. The fix: add a `@DefaultBean @ApplicationScoped` stub implementing the unsatisfied interface in the consuming module's test sources. All stub methods throw `UnsupportedOperationException` — they are not expected to be called in non-reactive tests. Do NOT disable the library (`casehub.ledger.enabled=false`) as a workaround; that removes coverage for the library's non-reactive beans. The stub is build-time transparent and yields to any real implementation. See `StubReactiveLedgerEntryRepository` in casehub-qhorus for the reference implementation.

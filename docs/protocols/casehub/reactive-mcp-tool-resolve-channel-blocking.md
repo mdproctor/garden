@@ -12,4 +12,7 @@ created: 2026-06-04
 garden_ref: "GE-20260604-96d82a"
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 `QhorusMcpToolsBase.resolveChannel(String channel)` performs blocking JPA lookups (`ChannelService.findById()` / `findByName()`) to accept either UUID or channel name. quarkus-mcp-server dispatches `@Tool` methods on the Vert.x I/O thread by default — calling a blocking JPA method from the I/O thread stalls it silently (no exception; only a Vert.x blocked-thread warning). Any reactive `@Tool` method in `ReactiveQhorusMcpTools` (or any subclass of `QhorusMcpToolsBase`) that calls `resolveChannel()` must carry `@Blocking` to ensure the method executes on a worker thread where JPA is safe. The `Uni<T>` return type is still correct — `@Blocking` does not change the return type, only the dispatch thread. Reference implementations: `project_channel` and `set_channel_type_constraints` in `ReactiveQhorusMcpTools`. See GE-20260604-96d82a for the gotcha diagnosis.

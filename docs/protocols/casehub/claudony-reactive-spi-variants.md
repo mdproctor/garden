@@ -11,4 +11,7 @@ violation_hint: "Implementing WorkerContextProvider (blocking) instead of Reacti
 created: 2026-05-19
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 casehub-engine's `CaseContextChangedEventHandler` runs on the Vert.x IO thread via `@ConsumeEvent`. It injects `ReactiveWorkerContextProvider` and `ReactiveWorkerProvisioner` (the reactive SPIs). Any Claudony implementation of the blocking variants (`WorkerContextProvider`, `WorkerProvisioner`, `CaseChannelProvider`) will never be called by the engine — and if they are called from any IO thread context they will throw `BlockingOperationNotAllowedException`. Claudony must implement the `Reactive*` SPI interfaces, offloading blocking work (JPA, tmux `ProcessBuilder`, Qhorus service calls) to `Infrastructure.getDefaultWorkerPool()` via `runSubscriptionOn()`. See `ClaudonyReactiveWorkerContextProvider`, `ClaudonyReactiveWorkerProvisioner`, `ClaudonyReactiveCaseChannelProvider` as reference implementations from #115.

@@ -10,6 +10,9 @@ violation_hint: "A service bean injects a dependency that is unavailable in a su
 created: 2026-05-19
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 When an extension library provides service beans that must work across deployment contexts
 with different capability sets (e.g. blocking-only vs reactive-enabled, JDBC vs MongoDB,
 offline vs networked), each service bean must declare dependencies only on capabilities

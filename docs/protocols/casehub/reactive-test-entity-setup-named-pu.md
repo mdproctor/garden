@@ -11,4 +11,7 @@ violation_hint: "persistChannel() or test helper calls Panache.withTransaction('
 created: 2026-05-29
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 When a `@QuarkusTest` for a reactive service needs pre-seeded entities before a reactive dispatch, the test setup helper must use `QuarkusTransaction.requiringNew().run(() -> blockingService.create(...))` — not `Panache.withTransaction("qhorus", () -> ...)`. JUnit test threads have no Vert.x event loop context; the reactive Panache API throws "No current Vert.x context found". `QuarkusTransaction.requiringNew()` uses JTA/JDBC which is not thread-constrained: the entity commits in a separate JTA transaction and is visible to the reactive service's own reactive session when it starts. Established in casehubio/qhorus#193 via `ReactiveMessageServiceTest.persistChannel()`.

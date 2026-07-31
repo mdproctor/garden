@@ -11,6 +11,9 @@ violation_hint: "A reactive SPI with a bundled JpaReactiveXxx implementation, or
 created: 2026-05-19
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 casehub-ledger provides SPI contracts for reactive repository access but bundles no
 production JPA implementation — consumers supply their own (Hibernate Reactive, reactive
 MongoDB, etc.). Alongside the SPI interface, a @DefaultBean @ApplicationScoped blocking

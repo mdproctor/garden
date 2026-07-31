@@ -12,4 +12,7 @@ violation_hint: "quarkus:build succeeds in @QuarkusTest but fails in production 
 created: 2026-05-24
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 Transitive dependencies (casehub-qhorus, casehub-ledger) ship reactive-capable CDI beans that Quarkus indexes during production augmentation. When no reactive datasource URL is configured, the reactive implementations are `@Vetoed` — but the service beans that inject them are not guarded, leaving their injection points unsatisfied. The `@QuarkusTest` environment suppresses this via `quarkus.datasource.reactive=false` in test `application.properties`; without an explicit matching suppression in production `application.properties`, the production `quarkus:build` fails. Every JDBC-only harness must add `quarkus.datasource.reactive=false` and `quarkus.datasource.<named-datasource>.reactive=false` (one entry per named datasource) to `src/main/resources/application.properties`. Do not use `casehub.qhorus.reactive.enabled=false` — this key no longer exists in the qhorus config model.

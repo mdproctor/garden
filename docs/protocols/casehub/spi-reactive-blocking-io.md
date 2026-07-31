@@ -11,4 +11,7 @@ violation_hint: "SPI method returns T directly (AgentAssignment, String, etc.) i
 created: 2026-05-29
 ---
 
+**RETIRED 2026-07-30.** The reactive tier was retired in favour of virtual threads (ADR-0005).
+This protocol no longer applies. See `universal/virtual-threads-default.md` for the replacement.
+
 Any strategy SPI method that a consumer might implement with blocking I/O (network calls, embedding services, external APIs) must return `Uni<T>` from its initial definition. The cost of declaring a synchronous SPI and then discovering blocking implementations is a breaking multi-repo API change (all callers updated, reactive chain restructured) detectable only at runtime — Vert.x IO thread blocking produces latency degradation under load, not a startup failure. The `AgentRoutingStrategy.select()` change in engine#376 was the canonical example: the sync return type was correct for in-memory trust scoring but wrong once embedding providers (engine#381) became the expected implementation. Implementations that do only in-memory work return `Uni.createFrom().item(result)`; implementations with blocking I/O use `.emitOn(Infrastructure.getDefaultWorkerPool())`. See GE-20260529-ff186e in the garden for the correct Mutiny pattern.
