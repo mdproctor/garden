@@ -14,6 +14,7 @@ Reconstitute this index: `grep -rl "^scope: platform\|^scope: repo" docs/protoco
 | File | Rule | Applies to |
 |------|------|------------|
 | [ai-agent-provider-cdi-priority.md](casehub/ai-agent-provider-cdi-priority.md) | AI agent domain SPIs: LangChain4j @DefaultBean in main module, Claude @ApplicationScoped in separate -claude/ module | casehub apps with domain SPIs that have LangChain4j + Claude Agent SDK implementations |
+| [cdi-decorator-agentprovider-cross-cutting.md](casehub/cdi-decorator-agentprovider-cross-cutting.md) | CDI @Decorator for cross-cutting AgentProvider concerns — @Priority(APPLICATION + N) ordering | Any module adding rate limiting, circuit breaking, or observability to AgentProvider |
 | [claude-agent-provider-vs-tmux-session-choice.md](casehub/claude-agent-provider-vs-tmux-session-choice.md) | Use ClaudeAgentProvider for ephemeral task-scoped invocations; tmux provisioners for persistent dashboard-visible sessions | casehub-platform-agent-claude consumers, claudony WorkerProvisioner implementations |
 | [external-api-surface-in-deep-dive.md](casehub/external-api-surface-in-deep-dive.md) | Document new API surface in the repo deep-dive, not DESIGN.md | All casehub peer repos when adding new public types, SPIs, or services |
 | [ci-dispatch-covers-direct-consumers.md](casehub/ci-dispatch-covers-direct-consumers.md) | CI dispatch chain must cover all direct Maven consumers — omitting one causes silent CI failure | all casehubio repos — every Trigger downstream CI step |
