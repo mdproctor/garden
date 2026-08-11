@@ -15,7 +15,7 @@ created: 2026-05-13
 **Applies to:** All casehubio repos  
 **Severity:** Required — violations force auth logic into the domain and make RBAC a rewrite, not an addition
 
-RBAC infrastructure is implemented in CaseHub — `CurrentPrincipal.roles()` delegates to `groups()`, and `casehub-platform-oidc` ships `OidcCurrentPrincipal` which reads roles from `SecurityIdentity.getRoles()`. `@RolesAllowed` annotations work with CaseHub group names. Adoption is pending — add `casehub-platform-oidc` as compile dep to activate. This protocol remains active: the structural constraints (no auth in domain/service, thin REST resources, injectable query filters, auth-free SPI signatures) must be maintained so RBAC adoption stays an addition, not a rewrite.
+RBAC infrastructure is implemented in CaseHub — `CurrentPrincipal.roles()` delegates to `groups()`, and `casehub-platform-oidc` ships `OidcCurrentPrincipal` which reads roles from `SecurityIdentity.getRoles()`. `@RolesAllowed` annotations work with CaseHub group names. Role names follow the `{domain}-{role}` convention (e.g. `platform-admin`, `devtown-engineer`) and are declared via constants classes (e.g. `PlatformRoles`, `DevtownRoles`). See [auth.md § Role Name Convention](../../../parent/docs/platform/auth.md) for the full registry. Adoption is pending — add `casehub-platform-oidc` as compile dep to activate. This protocol remains active: the structural constraints (no auth in domain/service, thin REST resources, injectable query filters, auth-free SPI signatures) must be maintained so RBAC adoption stays an addition, not a rewrite.
 
 ---
 
@@ -28,7 +28,7 @@ Auth is an incoming adapter concern. The domain never sees a principal, a role, 
 **Never:**
 ```java
 // In a service or domain class
-if (currentUser.hasRole("CASE_ADMIN")) {
+if (currentUser.hasRole("engine-admin")) {
     caseRuntime.startCase(...);
 }
 ```
@@ -37,7 +37,7 @@ if (currentUser.hasRole("CASE_ADMIN")) {
 ```java
 // In a REST resource (incoming adapter)
 @POST @Path("/cases")
-@RolesAllowed("CASE_ADMIN")
+@RolesAllowed(EngineRoles.ADMIN)
 public Uni<Response> startCase(StartCaseRequest request) { ... }
 ```
 
