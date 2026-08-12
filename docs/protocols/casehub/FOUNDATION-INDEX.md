@@ -101,6 +101,7 @@ Reconstitute this index: `grep -rl "^scope: platform\|^scope: repo" docs/protoco
 | [case-channel-message-signal.md](casehub/case-channel-message-signal.md) | `channelMessage` context path convention — payload shape, commitment-resolving types, channel naming, overwrite semantics | casehub-engine harnesses receiving human messages on Qhorus channels |
 | [cross-backend-aggregation-service.md](casehub/cross-backend-aggregation-service.md) | Cross-backend aggregation: isolate failure per source, always return 200 with a sources field, JOIN over N+1, document identity invariant | Any casehub module assembling a unified view from multiple independent backends |
 | [spi-evolution-default-methods.md](casehub/spi-evolution-default-methods.md) | Add new optional SPI capabilities as Java interface default methods with safe no-op returns; always add to abstract contract test | All casehub SPIs with multiple implementations |
+| [orm-xml-tier-separation-api-purity.md](casehub/orm-xml-tier-separation-api-purity.md) | Declare JPA mappings for api/ domain classes in runtime orm.xml — never annotate api/ classes directly | casehub foundation repos — api/ modules with domain model classes requiring JPA mapping |
 
 ---
 
