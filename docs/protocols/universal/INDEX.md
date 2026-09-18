@@ -41,6 +41,8 @@ Reconstitute: `grep -rl "^scope: universal" docs/protocols/universal/*.md`
 | [cdi-classpath-presence-requires-module-separation.md](cdi-classpath-presence-requires-module-separation.md) | @ApplicationScoped impl must be in a separate module for classpath-presence CDI activation to work | Any Quarkus project using @DefaultBean fallback displaced by optional @ApplicationScoped |
 | [spi-default-method-contract-test.md](spi-default-method-contract-test.md) | Verify SPI default method contracts with an anonymous implementation test | Any library with SPIs and default methods |
 | [spi-signature-change-all-impls-same-commit.md](spi-signature-change-all-impls-same-commit.md) | Update all in-repo SPI implementations when a method signature changes — in the same commit | Any Java project with multiple SPI implementations in one repo |
+| [scheduled-task-top-level-exception-guard.md](scheduled-task-top-level-exception-guard.md) | Scheduled background tasks must have top-level exception guards — scheduleAtFixedRate silently kills the task on uncaught exceptions | Any Java project using ScheduledExecutorService |
+| [volatile-swap-atomic-single-reference.md](volatile-swap-atomic-single-reference.md) | Volatile swap-and-reset must be atomic via single-reference pattern — bundle related volatile fields into one record | Any @ApplicationScoped bean with swap-and-reset over multiple volatile fields |
 
 ## Quarkus
 
@@ -68,6 +70,8 @@ Reconstitute: `grep -rl "^scope: universal" docs/protocols/universal/*.md`
 |------|------|------------|
 | [persistence-backend-cdi-priority.md](persistence-backend-cdi-priority.md) | Three-tier CDI priority ladder — `@DefaultBean` → `@ApplicationScoped` → `@Alternative @Priority(1)` — backend activates by classpath presence | Any Quarkus project with multiple competing CDI implementations of the same persistence SPI |
 | [startup-bean-config-self-contained.md](startup-bean-config-self-contained.md) | @Startup beans must read config via @ConfigProperty directly — no cross-bean @PostConstruct dependencies | Any @Startup @ApplicationScoped bean that depends on shared configuration or global state |
+| [cdi-observational-decorator-failure-isolation.md](cdi-observational-decorator-failure-isolation.md) | CDI observational decorators must isolate side-effect failures — event.fire() and secondary store calls wrapped in try-catch | Any CDI @Decorator that fires events or writes to secondary stores after delegate succeeds |
+| [cdi-decorator-unique-priority.md](cdi-decorator-unique-priority.md) | CDI decorator priorities must be unique per SPI and documented — equal priorities produce undefined ordering | Any CDI @Decorator chain with multiple decorators on the same interface |
 
 | [no-jpa-entities-across-requires-new.md](no-jpa-entities-across-requires-new.md) | No JPA entities cross a REQUIRES_NEW boundary — extract primitives before the call | Any Quarkus service calling a @Transactional(REQUIRES_NEW) method from within an outer @Transactional context |
 | [reactive-messaging-ack-chain-whenComplete.md](reactive-messaging-ack-chain-whenComplete.md) | Use `.whenComplete()` not `.exceptionally()` when `fireAsync()` is chained to `message.ack()` — `.exceptionally()` silently acks on failure | Any SmallRye `@Incoming` consumer that dispatches CDI events and chains `.thenCompose(message.ack())` |
